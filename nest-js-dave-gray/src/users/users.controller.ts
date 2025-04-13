@@ -1,3 +1,4 @@
+import { UsersService } from './users.service';
 import {
   Controller,
   Body,
@@ -11,28 +12,45 @@ import {
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
   @Get()
   findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
-    return [];
+    return this.usersService.findAll(role);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return { id };
+    return this.usersService.findOne(parseInt(id));
   }
 
   @Post()
-  createOne(@Body() user: {}) {
-    return user;
+  createOne(
+    @Body()
+    user: {
+      name: string;
+      email: string;
+      role: 'INTERN' | 'ENGINEER' | 'ADMIN';
+    },
+  ) {
+    return this.usersService.createOne(user);
   }
 
   @Patch(':id')
-  updateOne(@Param('id') id: string, @Body() userUpdate: {}) {
-    return { id, ...userUpdate };
+  updateOne(
+    @Param('id') id: string,
+    @Body()
+    data: Partial<{
+      name: string;
+      email: string;
+      role: 'INTERN' | 'ENGINEER' | 'ADMIN';
+    }>,
+  ) {
+    return this.usersService.updateOne(parseInt(id), data);
   }
 
   @Delete(':id')
   deleteOne(@Param('id') id: string) {
-    return { id };
+    return this.usersService.deleteOne(parseInt(id));
   }
 }

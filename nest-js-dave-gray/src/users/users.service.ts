@@ -26,7 +26,7 @@ export class UsersService {
     email: string;
     role: 'INTERN' | 'ENGINEER' | 'ADMIN';
   }) {
-    const id = this.users.length++;
+    const id = Math.max(...this.users.map((user) => user.id)) + 1;
     const user = { id, ...data };
 
     this.users.push(user);

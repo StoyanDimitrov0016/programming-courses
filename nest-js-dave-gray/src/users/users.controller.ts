@@ -8,6 +8,7 @@ import {
   Post,
   Patch,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 @Controller('users')
@@ -20,8 +21,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(parseInt(id));
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Post()
@@ -38,7 +39,7 @@ export class UsersController {
 
   @Patch(':id')
   updateOne(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body()
     data: Partial<{
       name: string;
@@ -46,11 +47,11 @@ export class UsersController {
       role: 'INTERN' | 'ENGINEER' | 'ADMIN';
     }>,
   ) {
-    return this.usersService.updateOne(parseInt(id), data);
+    return this.usersService.updateOne(id, data);
   }
 
   @Delete(':id')
-  deleteOne(@Param('id') id: string) {
-    return this.usersService.deleteOne(parseInt(id));
+  deleteOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.deleteOne(id);
   }
 }

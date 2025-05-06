@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,20 +14,22 @@ export class UsersService {
 
   findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
     if (role) {
-      return this.users.filter((user) => user.role === role);
+      const filtered = this.users.filter((user) => user.role === role);
+      if (filtered.length === 0) {
+        throw new NotFoundException('Unsupported user role.');
+      }
+      return filtered;
     }
     return this.users;
   }
 
   findOne(id: number) {
-    return this.users.find((user) => user.id === id);
+    const user = this.users.find((user) => user.id === id);
+    if (!user) throw new NotFoundException(`User with ID: ${id} not found.`);
+    return user;
   }
 
-  createOne(data: {
-    name: string;
-    email: string;
-    role: 'INTERN' | 'ENGINEER' | 'ADMIN';
-  }) {
+  createOne(data: CreateUserDto) {
     const id = Math.max(...this.users.map((user) => user.id)) + 1;
     const user = { id, ...data };
 
@@ -33,14 +37,7 @@ export class UsersService {
     return user;
   }
 
-  updateOne(
-    id: number,
-    data: Partial<{
-      name: string;
-      email: string;
-      role: 'INTERN' | 'ENGINEER' | 'ADMIN';
-    }>,
-  ) {
+  updateOne(id: number, data: UpdateUserDto) {
     const position = this.users.findIndex((user) => user.id === id);
     const user = this.users[position];
     const updated = { ...user, ...data };

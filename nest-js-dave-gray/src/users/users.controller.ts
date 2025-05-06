@@ -1,4 +1,6 @@
 import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import {
   Controller,
   Body,
@@ -26,26 +28,14 @@ export class UsersController {
   }
 
   @Post()
-  createOne(
-    @Body()
-    user: {
-      name: string;
-      email: string;
-      role: 'INTERN' | 'ENGINEER' | 'ADMIN';
-    },
-  ) {
-    return this.usersService.createOne(user);
+  createOne(@Body() data: CreateUserDto) {
+    return this.usersService.createOne(data);
   }
 
   @Patch(':id')
   updateOne(
     @Param('id', ParseIntPipe) id: number,
-    @Body()
-    data: Partial<{
-      name: string;
-      email: string;
-      role: 'INTERN' | 'ENGINEER' | 'ADMIN';
-    }>,
+    @Body() data: UpdateUserDto,
   ) {
     return this.usersService.updateOne(id, data);
   }
